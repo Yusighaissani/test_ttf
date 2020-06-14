@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Testapp (Livechat 2)</title>
+    <link rel="shortcut icon" type="image/png" href="#" />
+    <!-- Bootstrap core CSS -->
+    <link href="libs/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="libs/css/mdb.css" rel="stylesheet">
+    <link href="libs/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/video.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="connection-page" id="login-page">
+        <div class="connection-page-content">
+            <h2>Welcome to Livechat2 Testapp</h2>
+            <div class="align-center" style="margin-bottom: 2%;">
+                <div class="table-responsive" style="height:200px;">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Email</th>
+                                <th scope="col">Password</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-list-grid-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <form id="user-login-form">
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Email</span>
+                    </div>
+                    <input id="email" type="text" class="form-control" aria-label="Email"
+                        placeholder="test@tetherfi.com" required>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Password</span>
+                    </div>
+                    <input id="password" type="password" class="form-control" aria-label="Password" placeholder=""
+                        required>
+                </div>
+                <div class="align-center">
+                    <button type="submit" class="btn btn-secondary" onclick="loginAndConnect();" title="Login"><span
+                            class="fas fa-sign-in-alt"></span></button>
+                    <button type="button" class="btn btn-secondary" onclick="openChannel();">Connect</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="content-page" class="hidden">
+        <header class="navbar fixed-top navbar-expand navbar-dark bg-secondary">
+            <a class="navbar-brand" href="#">Livechat2 Test Client</a>
+            <div class="collapse navbar-collapse" id="navbarColor02">
+                <ul class="navbar-nav mr-auto" id="testapp-navs">
+                    <li class="nav-item active" id="messaging-nav-item">
+                        <a class="nav-link" href="#" id="messaging-nav-link"
+                            onclick="NavbarSwitch('messaging');">Messaging</a>
+                    </li>
+                    <li class="nav-item" id="groups-nav-item">
+                        <a class="nav-link" href="#" id="groups-nav-link" onclick="NavbarSwitch('groups');">Groups</a>
+                    </li>
+                    <li class="nav-item" id="audio-video-nav-item">
+                        <a class="nav-link" href="#" id="audio-video-nav-link"
+                            onclick="NavbarSwitch('audio-video');">Audio/Video</a>
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-danger" href="#" onclick="end();" title="Disconnect"><span
+                    class="fas fa-sign-out-alt"></span></button>
+        </header>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8" id="testapp-navs-content">
+                    <div id="messaging-content" class="testapp-nav-content-div">
+                        <div class="padding-2">
+                            <input class="form-control" id="msg-userId" type="text" placeholder="User Id"
+                                aria-label="UserId" />
+                            <input class="form-control" id="msg" type="text" size="50" placeholder="Message"
+                                aria-label="Message" />
+                            <div class="align-center">
+                                <button type="submit" class="btn btn-secondary" onclick="sendUserMsg();"
+                                    title="Send User Message"><span class="fas fa-paper-plane"></span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="groups-content" class="testapp-nav-content-div hidden">
+                        <div class="padding-2">
+                            <div class="align-center">
+                                <button type="button" class="btn btn-success" onclick="CreateNewGroup();"
+                                    title="Create Group"><i class="fas fa-users-medical"></i></button>
+                                <button type="button" class="btn btn-secondary" onclick="RefreshGroupList();"
+                                    title="Refresh Group List"><i class="fas fa-sync-alt"></i></button>
+                            </div>
+
+                            <h5 class="group-user-list-header">Available Groups</h5>
+                            <div class="table-responsive group-user-list-table-div">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"></th>
+                                            <th scope="col">Group Id</th>
+                                            <th scope="col">Group Name</th>
+                                            <!-- <th scope="col">Group Participants</th> -->
+                                            <th scope="col">Created By</th>
+                                            <th scope="col">Created DateTime</th>
+                                            <th scope="col">User Modification</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="group-list-grid-body">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="audio-video-content" class="testapp-nav-content-div hidden">
+                        <div class="padding-2">
+                            <div id="container hidden" class="video-ui">
+                                <div class="align-center">
+                                    <div id="channel-selector-group" class="btn-group btn-group-justified"
+                                        data-toggle="buttons">
+                                        <a href="#" class="btn btn-default" data-toggle="tab"
+                                            onclick="OnSelectAudioVideo(false, this);">Audio</a>
+                                        <a href="#" class="btn btn-default" data-toggle="tab"
+                                            onclick="OnSelectAudioVideo(true, this);">Video</a>
+                                    </div>
+                                </div>
+                                <div class="align-center">
+                                    <button class="btn btn-success" id="callButton" title="Call"><span
+                                            class="fas fa-phone-alt"></span></button>
+                                    <button class="btn btn-success" id="screenshareStartButton"
+                                        title="Start Screenshare"><span class="fas fa-clone"></span></button>
+                                    <button class="btn btn-success" id="voiceMuteButton" title="Mute Voice"><span
+                                            class="fas fa-microphone"></span></button>
+                                    <button class="btn btn-success" id="videoMuteButton" title="Mute Video"><span
+                                            class="fas fa-video"></span></button>
+                                    <button class="btn btn-warning" id="holdButton" title="Hold">Hold</button>
+                                    <button class="btn btn-danger" id="hangupButton" title="Hang Up"><span
+                                            class="fas fa-phone-slash"></span></button>
+                                    <button class="btn btn-danger" id="screenshareStopButton"
+                                        title="Stop Screenshare"><span class="fas fa-stop-circle"></span></button>
+                                    <button class="btn btn-secondary" id="addButton" title="Conference User"><span
+                                            class="fas fa-user-plus"></span></button>
+                                </div>
+                                <div id="videoContainer"></div>
+                                <br />
+                                <div id="screenshareVideoContainer"></div>
+                                <input id="toId" type="text" class="form-control" size="50" aria-label="To"
+                                    placeholder="Type User Id" value="user:">
+                                <div style="overflow-y:scroll; height:100px;">
+                                    <div id="console">
+                                        <h6><b>Note:</b> Please run the 2 instances in two Chrome/Firefox windows (not
+                                            in 2
+                                            tabs of same
+                                            window) when using video (as opposed to camera) capture</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="output" class="card card-body msg-body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="sessionModal" tabindex="-1" role="dialog" aria-labelledby="sessionModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="sessionModalLabel">Override Session</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+
+            User already logged in with another session. Do you want to take over the session ?
+            
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="overrideSession()" >YES</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- JQuery -->
+    <script type="text/javascript" src="libs/js/jquery-3.4.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="libs/js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="libs/js/bootstrap.min.js"></script>
+    <!-- PNotify -->
+    <script type="text/javascript" src="libs/js/PNotify.js"></script>
+
+     <!-- livechat2 SDK -->
+    <script type='text/javascript' src='libs/js/livechat2sdk/livechat2sdk-lib.min.js'></script> 
+
+    <!-- Testapp related scripts -->
+    <script type='text/javascript' src='js/testapp/logging.js'></script>
+    <script type='text/javascript' src='js/testapp/configurations.js'></script>
+    <script type='module' src='js/testapp/livechat-overrides.js'></script>
+    <script type='text/javascript' src='js/testapp/groups.js'></script>
+    <script type='text/javascript' src='js/testapp/login.js'></script>
+    <script type='text/javascript' src='js/testapp/messaging.js'></script>
+    <script type='text/javascript' src='js/testapp/load.js'></script>
+
+    <!-- call sdk -->
+    <script type='text/javascript' src='libs/js/callsdk/adapter.js'></script>
+    <script type='text/javascript' src='libs/js/callsdk/livechat_video.min.js'></script>
+
+    <!-- Video test scripts -->
+    <script type='text/javascript' src='js/testapp/TestCallSdk.js'></script>
+</body>
+
+</html>
